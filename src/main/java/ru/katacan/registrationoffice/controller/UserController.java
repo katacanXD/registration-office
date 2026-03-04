@@ -1,4 +1,4 @@
-package ru.katacan.registrationoffice;
+package ru.katacan.registrationoffice.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,7 +10,7 @@ import ru.katacan.registrationoffice.repository.UserRepository;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/v1/users")
 public class UserController {
 
     private final UserRepository userRepo;
@@ -26,7 +26,7 @@ public class UserController {
 
     @GetMapping("/doctors")
     public List<User> getDoctors() {
-        return userRepo.findByAclName("ROLE_DOCTOR");
+        return userRepo.findByAclName("doctor");
     }
 
     @GetMapping("/patient/{policy}")

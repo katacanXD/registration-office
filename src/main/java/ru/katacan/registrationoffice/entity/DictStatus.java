@@ -15,5 +15,5 @@ public class DictStatus {
     private Long id;
 
     @Column(name = "f_status_name", nullable = false, unique = true, length = 50)
-    private String name;
+    private String name; // содержит "booked" | "canceled" | "completed"
 }
