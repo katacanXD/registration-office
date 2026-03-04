@@ -31,7 +31,7 @@ public class DataInitializer implements CommandLineRunner {
         // Создание тестовых пользователей, если их нет
         initTestUsers();
 
-        // Создание тестовых рабочих слотовpostgres
+        // Создание тестовых рабочих слотов postgres
         initTestWorkSlots();
 
         // Создание тестовых записей
