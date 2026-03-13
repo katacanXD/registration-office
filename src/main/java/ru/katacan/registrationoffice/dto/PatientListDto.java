@@ -10,7 +10,7 @@ import java.util.List;
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class PatientListDto {
-    private List<PatientDto> patients;
+    public List<PatientDto> patients;
 
     @Data
     @Builder

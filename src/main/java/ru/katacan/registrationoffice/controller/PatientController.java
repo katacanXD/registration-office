@@ -27,39 +27,10 @@ public class PatientController {
 
     @GetMapping("/dashboard")
     public ResponseEntity<PatientDashboardDto> getDashboard(@RequestParam Long patientId) {
-        return userRepository.findById(patientId)
-                .map(patient -> {
-                    // Получаем предстоящие записи пациента (не отмененные и не завершенные)
-                    List<Appointment> appointments = appointmentRepository
-                            .findByPatientAndStatus_NameIn(patient,
-                                    List.of("booked")); // только активные
-
-                    return ResponseEntity.ok(PatientDashboardDto.builder()
-                            .user(userMapper.toPatientUserInfo(patient))
-                            .appointments(appointments.stream()
-                                    .map(appointmentMapper::toAppointmentShort)
-                                    .collect(Collectors.toList()))
-                            .build());
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PatchMapping("/policy")
     public ResponseEntity<?> updatePolicy(@RequestParam Long patientId,
                                           @RequestBody PolicyRequestDto request) {
-        return userRepository.findById(patientId)
-                .<ResponseEntity<?>>map(patient -> {
-                    patient.setPolicyNumber(request.getPolicyNumber());
-                    userRepository.save(patient);
-
-                    return ResponseEntity.ok(PolicyResponseDto.builder()
-                            .success(true)
-                            .message("Полис успешно привязан. Теперь вы можете записываться на прием.")
-                            .build());
-                })
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(ErrorResponseDto.builder()
-                                .message("Пациент с id " + patientId + " не найден")
-                                .build()));
     }
 }

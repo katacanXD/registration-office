@@ -6,6 +6,7 @@ import ru.katacan.registrationoffice.entity.User;
 import org.springframework.stereotype.Component;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 @Component
 public class AppointmentMapper {
@@ -22,6 +23,26 @@ public class AppointmentMapper {
                         appointment.getSlotDateTime().format(dateTimeFormatter) : null)
                 .address(CLINIC_ADDRESS)
                 .status(appointment.getStatus() != null ? appointment.getStatus().getName() : null)
+                .build();
+    }
+
+    public AppointmentDetailDto toAppointmentDetail(Appointment appointment) {
+        return AppointmentDetailDto.builder()
+                .appointmentId(appointment.getId())
+                .datetime(appointment.getSlotDateTime() != null ?
+                        appointment.getSlotDateTime().format(dateTimeFormatter) : null)
+                .address(CLINIC_ADDRESS)
+                // Маппинг врача
+                .doctor(appointment.getDoctor() != null ?
+                        AppointmentDetailDto.DoctorInfoDto.builder()
+                                .fio(appointment.getDoctor().getFullName())
+                                .build() : null)
+                // Маппинг пациента
+                .patient(appointment.getPatient() != null ?
+                        AppointmentDetailDto.PatientInfoDto.builder()
+                                .fio(appointment.getPatient().getFullName())
+                                .policyNumber(appointment.getPatient().getPolicyNumber())
+                                .build() : null)
                 .build();
     }
 
@@ -46,12 +67,12 @@ public class AppointmentMapper {
                 .build();
     }
 
-    public AppointmentDetailDto toAppointmentDetail(Appointment appointment) {
-        return AppointmentDetailDto.builder()
-                .appointmentId(appointment.getId())
-                .datetime(appointment.getSlotDateTime() != null ?
-                        appointment.getSlotDateTime().format(dateTimeFormatter) : null)
-                .address(CLINIC_ADDRESS)
-                .build();
-    }
+//    public AppointmentDetailDto toAppointmentDetail(Appointment appointment) {
+//        return AppointmentDetailDto.builder()
+//                .appointmentId(appointment.getId())
+//                .datetime(appointment.getSlotDateTime() != null ?
+//                        appointment.getSlotDateTime().format(dateTimeFormatter) : null)
+//                .address(CLINIC_ADDRESS)
+//                .build();
+//    }
 }

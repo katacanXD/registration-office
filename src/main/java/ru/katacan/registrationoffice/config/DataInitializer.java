@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
+
 @Component
 @RequiredArgsConstructor
 public class DataInitializer implements CommandLineRunner {
@@ -41,9 +42,9 @@ public class DataInitializer implements CommandLineRunner {
     private void initDicts() {
         // Статусы записей
         if (statusRepository.count() == 0) {
-            createStatus("booked", "booked");
-            createStatus("canceled", "canceled");
-            createStatus("completed", "completed");
+            createStatus("booked");
+            createStatus("canceled");
+            createStatus("completed");
         }
 
         // Роли пользователей
@@ -55,7 +56,7 @@ public class DataInitializer implements CommandLineRunner {
         }
     }
 
-    private void createStatus(String name, String code) {
+    private void createStatus(String name) {
         DictStatus status = new DictStatus();
         status.setName(name);
         statusRepository.save(status);

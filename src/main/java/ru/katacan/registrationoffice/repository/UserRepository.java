@@ -23,11 +23,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.acl.name = 'patient'")
     List<User> findAllPatients();
 
-    @Query("SELECT u FROM User u WHERE u.acl.name IN ('doctor', 'admin') " +
+    @Query("SELECT u FROM User u WHERE u.acl.name IN ('doctor') " +
             "AND (LOWER(u.fullName) LIKE LOWER(CONCAT('%', :search, '%')) " +
             "OR LOWER(u.speciality) LIKE LOWER(CONCAT('%', :search, '%')))")
     List<User> searchDoctors(@Param("search") String search);
 
-    @Query("SELECT u FROM User u WHERE u.acl.name IN ('doctor', 'admin')")
+    @Query("SELECT u FROM User u WHERE u.acl.name IN ('doctor')")
     List<User> findAllDoctors();
 }
