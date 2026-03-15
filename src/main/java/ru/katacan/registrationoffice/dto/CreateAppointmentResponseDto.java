@@ -7,7 +7,6 @@ import lombok.Data;
 
 @Data
 @Builder
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CreateAppointmentResponseDto {
     private Long appointmentId;
     private String message;

@@ -20,13 +20,13 @@ public class RegistrarController {
 
     private final RegistrarService registrarService;
 
-    @GetMapping("/patients")
-    public ResponseEntity<PatientListDto> getAllPatients() { //TODO добавить плагинацию
-        List<PatientListDto.PatientDto> patients = registrarService.getAllPatients();
-
-        PatientListDto response = new PatientListDto();
-        response.setPatients(patients);
-
-        return ResponseEntity.ok(response);
-    }
+//    @GetMapping("/patients")
+//    public ResponseEntity<PatientListDto> getAllPatients() { //TODO добавить плагинацию
+//        List<PatientListDto.PatientDto> patients = registrarService.getAllPatients();
+//
+//        PatientListDto response = new PatientListDto();
+//        response.setPatients(patients);
+//
+//        return ResponseEntity.ok(response);
+//    }
 }

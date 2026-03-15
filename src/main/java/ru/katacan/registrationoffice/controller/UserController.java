@@ -21,63 +21,63 @@ public class UserController {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    @GetMapping()
-    public ResponseEntity<List<UserInfoDto>> getAllUsers() {
-    }
-
-    /**
-     * Получить пользователя по ID
-     */
-    @GetMapping("/{userId}")
-    public ResponseEntity<?> getUserById(@PathVariable Long userId) {
-    }
-
-    /**
-     * Обновить информацию о пользователе
-     */
-    @PatchMapping("/{userId}")
-    public ResponseEntity<?> updateUser(
-            @PathVariable Long userId,
-            @RequestBody UpdateUserRequestDto request
-    ) {
-    }
-
-    /**
-     * Удалить пользователя
-     */
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<?> deleteUser(
-            @PathVariable Long userId
-    ) {
-    }
-
-    /**
-     * Получить всех врачей
-     */
-    @GetMapping("/doctors")
-    public ResponseEntity<List<DoctorShortDto>> getAllDoctors() {
-    }
-
-    /**
-     * Получить всех пациентов
-     */
-    @GetMapping("/patients")
-    public ResponseEntity<List<PatientListDto.PatientDto>> getAllPatients() {
-    }
-
-    /**
-     * Поиск пользователей по ФИО
-     */
-    @GetMapping("/search")
-    public ResponseEntity<List<UserInfoDto>> searchUsers(@RequestParam String query) {
-    }
-
-    /**
-     * Сменить пароль
-     */
-    @PostMapping("/{userId}/change-password")
-    public ResponseEntity<?> changePassword(
-            @PathVariable Long userId,
-            @RequestBody ChangePasswordRequestDto request) {
-    }
+//    @GetMapping()
+//    public ResponseEntity<List<UserInfoDto>> getAllUsers() {
+//    }
+//
+//    /**
+//     * Получить пользователя по ID
+//     */
+//    @GetMapping("/{userId}")
+//    public ResponseEntity<?> getUserById(@PathVariable Long userId) {
+//    }
+//
+//    /**
+//     * Обновить информацию о пользователе
+//     */
+//    @PatchMapping("/{userId}")
+//    public ResponseEntity<?> updateUser(
+//            @PathVariable Long userId,
+//            @RequestBody UpdateUserRequestDto request
+//    ) {
+//    }
+//
+//    /**
+//     * Удалить пользователя
+//     */
+//    @DeleteMapping("/{userId}")
+//    public ResponseEntity<?> deleteUser(
+//            @PathVariable Long userId
+//    ) {
+//    }
+//
+//    /**
+//     * Получить всех врачей
+//     */
+//    @GetMapping("/doctors")
+//    public ResponseEntity<List<DoctorShortDto>> getAllDoctors() {
+//    }
+//
+//    /**
+//     * Получить всех пациентов
+//     */
+//    @GetMapping("/patients")
+//    public ResponseEntity<List<PatientListDto.PatientDto>> getAllPatients() {
+//    }
+//
+//    /**
+//     * Поиск пользователей по ФИО
+//     */
+//    @GetMapping("/search")
+//    public ResponseEntity<List<UserInfoDto>> searchUsers(@RequestParam String query) {
+//    }
+//
+//    /**
+//     * Сменить пароль
+//     */
+//    @PostMapping("/{userId}/change-password")
+//    public ResponseEntity<?> changePassword(
+//            @PathVariable Long userId,
+//            @RequestBody ChangePasswordRequestDto request) {
+//    }
 }

@@ -7,7 +7,6 @@ import lombok.Data;
 
 @Data
 @Builder
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class LoginResponseDto {
     private String token; // пока заглушка
     private UserInfoDto user;

@@ -1,5 +1,6 @@
 package ru.katacan.registrationoffice.controller;
 
+import org.springframework.http.HttpStatus;
 import ru.katacan.registrationoffice.dto.*;
 import ru.katacan.registrationoffice.entity.User;
 import ru.katacan.registrationoffice.entity.WorkSlot;
@@ -28,25 +29,38 @@ public class DoctorController {
 
     @GetMapping()
     public ResponseEntity<DoctorListDto> getDoctors(
-            @RequestParam(required = false) String search) {
+            @RequestParam(required = false) String search
+    ) {
+        DoctorListDto result = userService.searchDoctors(search);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(result);
     }
 
     @GetMapping("/{doctorId}/slots")
     public ResponseEntity<DoctorSlotsDto> getDoctorSlots(
             @PathVariable Long doctorId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    ) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(workSlotService.getDoctorSlots(doctorId, date));
     }
 
     @GetMapping("/{doctorId}/calendar")
     public ResponseEntity<DoctorCalendarDto> getDoctorCalendar(
             @PathVariable Long doctorId,
             @RequestParam Integer month,
-            @RequestParam Integer year) {
-    }
+            @RequestParam Integer year
+    ) {
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDate endDate = startDate.plusMonths(1).minusDays(1);
 
-    @GetMapping("/{doctorId}/schedule")
-    public ResponseEntity<DoctorScheduleDto> getDoctorSchedule(
-            @PathVariable Long doctorId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(workSlotService.getDoctorSlotsBetweenDates(doctorId, startDate, endDate));
     }
+//
+//    @GetMapping("/{doctorId}/schedule")
+//    public ResponseEntity<DoctorScheduleDto> getDoctorSchedule(
+//            @PathVariable Long doctorId,
+//            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+//    }
 }

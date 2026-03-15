@@ -8,7 +8,6 @@ import java.util.List;
 
 @Data
 @Builder
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class DoctorSlotsDto {
     private Long doctorId;
     private String date; // "2026-03-24"

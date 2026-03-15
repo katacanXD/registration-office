@@ -7,7 +7,6 @@ import lombok.Data;
 
 @Data
 @Builder
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CancelAppointmentResponseDto {
     private Long appointmentId;
     private String status;

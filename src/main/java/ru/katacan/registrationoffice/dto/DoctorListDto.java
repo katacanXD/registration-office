@@ -8,7 +8,6 @@ import java.util.List;
 
 @Data
 @Builder
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class DoctorListDto {
     private List<DoctorShortDto> doctors;
     private Long totalFound;

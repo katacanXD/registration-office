@@ -8,7 +8,6 @@ import java.util.List;
 
 @Data
 @Builder
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class PatientListDto {
     public List<PatientDto> patients;
 

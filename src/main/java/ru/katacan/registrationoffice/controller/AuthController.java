@@ -14,11 +14,11 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/registration")
-    public ResponseEntity<RegistrationResponseDto> register(@RequestBody AuthRequestDto request) {
-    }
-
-    @PostMapping("/auth/login")
-    public ResponseEntity<?> login(@RequestBody AuthRequestDto request) {
-    }
+//    @PostMapping("/registration")
+//    public ResponseEntity<RegistrationResponseDto> register(@RequestBody AuthRequestDto request) {
+//    }
+//
+//    @PostMapping("/auth/login")
+//    public ResponseEntity<?> login(@RequestBody AuthRequestDto request) {
+//    }
 }

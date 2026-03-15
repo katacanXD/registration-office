@@ -1,8 +1,9 @@
 package ru.katacan.registrationoffice.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
-import ru.katacan.registrationoffice.dto.AppointmentDetailDto;
-import ru.katacan.registrationoffice.dto.CreateAppointmentRequestDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ru.katacan.registrationoffice.dto.*;
 import ru.katacan.registrationoffice.entity.Appointment;
 import ru.katacan.registrationoffice.entity.DictStatus;
 import ru.katacan.registrationoffice.entity.User;
@@ -27,6 +28,8 @@ import java.util.Optional;
 @Transactional
 public class AppointmentServiceImpl implements AppointmentService {
 
+    private static final Logger log = LoggerFactory.getLogger(AppointmentServiceImpl.class);
+
     private final AppointmentRepository appointmentRepository;
     private final UserRepository userRepository;
     private final DictStatusRepository statusRepository;
@@ -35,7 +38,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final UserMapper userMapper;
 
     @Override
-    public Appointment createAppointment(CreateAppointmentRequestDto request) {
+    public CreateAppointmentResponseDto createAppointment(CreateAppointmentRequestDto request) {
         // Валидация входных данных
         if (request.getDoctorId() == null || request.getPatientId() == null || request.getSlotDatetime() == null) {
             throw new BadRequestException("Не все обязательные поля заполнены");
@@ -72,11 +75,46 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointment.setSlotDateTime(slotTime);
         appointment.setStatus(status);
 
-        return appointmentRepository.save(appointment);
+        appointmentRepository.save(appointment);
+
+        return appointmentMapper.toCreateResponse(appointment, doctor);
     }
 
     @Override
-    public void cancelAppointment(Long appointmentId) {
+    @Transactional
+    public UpdateAppointmentRequestDto updateAppointment(Long appointmentId, UpdateAppointmentRequestDto request) {
+        // 1. Находим существующую запись
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Запись с id " + appointmentId + " не найдена"));
+
+        // Меняют время
+        if (request.getSlotDatetime() != null) {
+            LocalDateTime newSlotTime;
+            try {
+                newSlotTime = LocalDateTime.parse(request.getSlotDatetime());
+            } catch (DateTimeParseException e) {
+                throw new BadRequestException("Неверный формат даты и времени");
+            }
+
+            if (newSlotTime.isBefore(LocalDateTime.now())) {
+                throw new BadRequestException("Нельзя перенести запись на прошедшее время");
+            }
+
+            // Проверяем доступность слота, исключая текущую запись из проверки
+            if (appointmentRepository.existsActiveAppointment(
+                    appointment.getDoctor(), newSlotTime, appointmentId)) {
+                throw new SlotNotAvailableException("Этот слот уже занят другим пациентом");
+            }
+            appointment.setSlotDateTime(newSlotTime);
+        }
+
+        appointmentRepository.save(appointment);
+
+        return appointmentMapper.toUpdateResponse(appointment);
+    }
+
+    @Override
+    public CancelAppointmentResponseDto cancelAppointment(Long appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Запись с id " + appointmentId + " не найдена"));
 
@@ -90,6 +128,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         appointment.setStatus(canceledStatus);
         appointmentRepository.save(appointment);
+
+        return appointmentMapper.toCancelResponse(appointment, appointment.getDoctor().getSpeciality());
     }
 
     @Override
@@ -103,6 +143,14 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .orElseThrow(() -> new EntityNotFoundException("Appointment not found"));
 
         return appointmentMapper.toAppointmentDetail(appointment);
+    }
+
+    @Override
+    public AppointmentShortDto getShortAppointmentById(Long appointmentId) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new EntityNotFoundException("Appointment not found"));
+
+        return appointmentMapper.toAppointmentShort(appointment);
     }
 
     @Override

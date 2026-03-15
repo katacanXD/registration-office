@@ -7,7 +7,6 @@ import lombok.Data;
 
 @Data
 @Builder
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class RegistrationResponseDto {
     private Long userId;
     private String fio;

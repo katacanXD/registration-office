@@ -7,7 +7,6 @@ import lombok.Data;
 
 @Data
 @Builder
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class SuccessResponseDto {
     private Boolean success;
     private String message;

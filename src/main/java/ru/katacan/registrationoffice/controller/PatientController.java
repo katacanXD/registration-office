@@ -25,12 +25,12 @@ public class PatientController {
     private final UserMapper userMapper;
     private final AppointmentMapper appointmentMapper;
 
-    @GetMapping("/dashboard")
-    public ResponseEntity<PatientDashboardDto> getDashboard(@RequestParam Long patientId) {
-    }
-
-    @PatchMapping("/policy")
-    public ResponseEntity<?> updatePolicy(@RequestParam Long patientId,
-                                          @RequestBody PolicyRequestDto request) {
-    }
+//    @GetMapping("/dashboard")
+//    public ResponseEntity<PatientDashboardDto> getDashboard(@RequestParam Long patientId) {
+//    }
+//
+//    @PatchMapping("/policy")
+//    public ResponseEntity<?> updatePolicy(@RequestParam Long patientId,
+//                                          @RequestBody PolicyRequestDto request) {
+//    }
 }

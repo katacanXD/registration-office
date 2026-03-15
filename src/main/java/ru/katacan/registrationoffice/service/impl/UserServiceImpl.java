@@ -22,7 +22,6 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    @Override
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -33,21 +32,44 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAllDoctors() {
-        return userRepository.findAllDoctors();
+    public DoctorListDto getAllDoctors() {
+        List<User> users = userRepository.findAllDoctors();
+
+        // Преобразуем список пользователей в список DTO
+        List<DoctorShortDto> doctorDtos = users.stream()
+                .map(userMapper::toDoctorShort)
+                .collect(Collectors.toList());
+
+        // Возвращаем объект-обертку DoctorListDto
+        return userMapper.toDoctorList(doctorDtos);
     }
 
     @Override
-    public List<User> getAllPatients() {
-        return userRepository.findAllPatients();
+    public PatientListDto getAllPatients() {
+        List<User> users = userRepository.findAll();
+
+        List<PatientListDto.PatientDto> patientDtos = users.stream()
+                .map(userMapper::toPatientDto)
+                .collect(Collectors.toList());
+
+        return userMapper.toPatientList(patientDtos);
     }
 
     @Override
-    public List<User> searchDoctors(String search) {
+    public DoctorListDto searchDoctors(String search) {
+        // Вызываем нужный метод репозитория в зависимости от наличия поисковой строки
         if (search == null || search.isEmpty()) {
             return getAllDoctors();
         }
-        return userRepository.searchDoctors(search);
+        List<User> users = userRepository.searchDoctors(search);
+
+        // Преобразуем список пользователей в список DTO
+        List<DoctorShortDto> doctorDtos = users.stream()
+                .map(userMapper::toDoctorShort)
+                .collect(Collectors.toList());
+
+        // Возвращаем объект-обертку DoctorListDto
+        return userMapper.toDoctorList(doctorDtos);
     }
 
     @Override

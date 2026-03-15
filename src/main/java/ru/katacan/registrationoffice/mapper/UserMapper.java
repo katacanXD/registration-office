@@ -4,6 +4,8 @@ import ru.katacan.registrationoffice.dto.*;
 import ru.katacan.registrationoffice.entity.User;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class UserMapper {
 
@@ -64,6 +66,19 @@ public class UserMapper {
     public AppointmentDetailDto.DoctorInfoDto toDoctorInfo(User doctor) {
         return AppointmentDetailDto.DoctorInfoDto.builder()
                 .fio(doctor.getFullName())
+                .build();
+    }
+
+    public DoctorListDto toDoctorList(List<DoctorShortDto> doctorDtos) {
+        return DoctorListDto.builder()
+                .doctors(doctorDtos)
+                .totalFound((long) doctorDtos.size())
+                .build();
+    }
+
+    public PatientListDto toPatientList(List<PatientListDto.PatientDto> patientDtos) {
+        return PatientListDto.builder()
+                .patients(patientDtos)
                 .build();
     }
 }
