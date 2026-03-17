@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.katacan.registrationoffice.service.UserService;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,10 +21,16 @@ public class UserController {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final UserService userService;
 
-//    @GetMapping()
-//    public ResponseEntity<List<UserInfoDto>> getAllUsers() {
-//    }
+    @GetMapping()
+    public ResponseEntity<UserListDto> getAllUsers(
+            @RequestParam(required = false) String search
+    ) {
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(userService.searchUsers(search));
+    }
 //
 //    /**
 //     * Получить пользователя по ID

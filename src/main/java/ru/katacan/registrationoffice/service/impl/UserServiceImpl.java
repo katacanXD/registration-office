@@ -1,11 +1,14 @@
 package ru.katacan.registrationoffice.service.impl;
 
 import ru.katacan.registrationoffice.dto.*;
+import ru.katacan.registrationoffice.entity.Appointment;
 import ru.katacan.registrationoffice.entity.User;
 import ru.katacan.registrationoffice.exception.ResourceNotFoundException;
 import ru.katacan.registrationoffice.mapper.UserMapper;
 import ru.katacan.registrationoffice.repository.UserRepository;
 import ru.katacan.registrationoffice.service.UserService;
+import ru.katacan.registrationoffice.repository.AppointmentRepository;
+import ru.katacan.registrationoffice.mapper.AppointmentMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,32 +24,63 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final AppointmentRepository appointmentRepository;
+    private final AppointmentMapper appointmentMapper;
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public UserListDto getAllUsers() {
+        List<User> users = userRepository.findAll();
+
+        List<UserInfoDto> userDtos = users.stream()
+                .map(userMapper::toUserInfo)
+                .collect(Collectors.toList());
+
+        return userMapper.toUserList(userDtos);
     }
 
-    @Override
-    public Optional<User> getUserById(Long userId) {
+    private Optional<User> getUserById(Long userId) {
         return userRepository.findById(userId);
     }
 
-    @Override
-    public DoctorListDto getAllDoctors() {
+    private DoctorListDto getAllDoctors() {
         List<User> users = userRepository.findAllDoctors();
 
-        // Преобразуем список пользователей в список DTO
         List<DoctorShortDto> doctorDtos = users.stream()
                 .map(userMapper::toDoctorShort)
                 .collect(Collectors.toList());
 
-        // Возвращаем объект-обертку DoctorListDto
         return userMapper.toDoctorList(doctorDtos);
     }
 
-    @Override
-    public PatientListDto getAllPatients() {
+    private PatientListDto getAllPatients() {
         List<User> users = userRepository.findAll();
+
+        List<PatientListDto.PatientDto> patientDtos = users.stream()
+                .map(userMapper::toPatientDto)
+                .collect(Collectors.toList());
+
+        return userMapper.toPatientList(patientDtos);
+    }
+
+    @Override
+    public UserListDto searchUsers(String search) {
+        if (search == null || search.isEmpty()) {
+            return getAllUsers();
+        }
+        List<User> users = userRepository.searchUsers(search);
+
+        List<UserInfoDto> userDtos = users.stream()
+                .map(userMapper::toUserInfo)
+                .collect(Collectors.toList());
+
+        return userMapper.toUserList(userDtos);
+    }
+
+    @Override
+    public PatientListDto searchPatients(String search) {
+        if (search == null || search.isEmpty()) {
+            return getAllPatients();
+        }
+        List<User> users = userRepository.searchPatients(search);
 
         List<PatientListDto.PatientDto> patientDtos = users.stream()
                 .map(userMapper::toPatientDto)
@@ -70,13 +104,6 @@ public class UserServiceImpl implements UserService {
 
         // Возвращаем объект-обертку DoctorListDto
         return userMapper.toDoctorList(doctorDtos);
-    }
-
-    @Override
-    public List<User> searchUsers(String query) {
-        return userRepository.findAll().stream()
-                .filter(user -> user.getFullName().toLowerCase().contains(query.toLowerCase()))
-                .collect(Collectors.toList());
     }
 
     @Override
@@ -124,5 +151,37 @@ public class UserServiceImpl implements UserService {
     @Override
     public User saveUser(User user) {
         return userRepository.save(user);
+    }
+
+    @Override
+    public PatientDashboardDto getDashboard(Long patientId) {
+        return userRepository.findById(patientId)
+                .map(patient -> {
+                    List<Appointment> appointments = appointmentRepository
+                            .findByPatientAndStatus_NameIn(patient, List.of("booked"));
+
+                    return PatientDashboardDto.builder()
+                            .user(userMapper.toPatientUserInfo(patient))
+                            .appointments(appointments.stream()
+                                    .map(appointmentMapper::toAppointmentShort)
+                                    .collect(Collectors.toList()))
+                            .build();
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("Пациент с id " + patientId + " не найден"));
+    }
+
+    @Override
+    public PolicyResponseDto updatePolicy(Long patientId, PolicyRequestDto request) {
+        return userRepository.findById(patientId)
+                .map(patient -> {
+                    patient.setPolicyNumber(request.getPolicyNumber());
+                    userRepository.save(patient);
+
+                    return PolicyResponseDto.builder()
+                            .success(true)
+                            .message("Полис успешно привязан. Теперь вы можете записываться на прием.")
+                            .build();
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("Пациент с id " + patientId + " не найден"));
     }
 }

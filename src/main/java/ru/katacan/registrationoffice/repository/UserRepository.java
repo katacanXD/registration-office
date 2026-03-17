@@ -18,16 +18,29 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByPolicyNumber(String policyNumber);
 
-    List<User> findByAclName(String aclName);
+    List<User> findByRoleName(String roleName);
 
-    @Query("SELECT u FROM User u WHERE u.acl.name = 'patient'")
+    @Query("SELECT u FROM User u WHERE u.role.name = 'patient'")
     List<User> findAllPatients();
 
-    @Query("SELECT u FROM User u WHERE u.acl.name IN ('doctor') " +
+    @Query("SELECT u FROM User u " +
+            "WHERE (:roleName IS NULL OR u.role.name = :roleName) " +
             "AND (LOWER(u.fullName) LIKE LOWER(CONCAT('%', :search, '%')) " +
             "OR LOWER(u.speciality) LIKE LOWER(CONCAT('%', :search, '%')))")
-    List<User> searchDoctors(@Param("search") String search);
+    List<User> searchByRoleAndText(@Param("search") String search, @Param("roleName") String roleName);
 
-    @Query("SELECT u FROM User u WHERE u.acl.name IN ('doctor')")
+    default List<User> searchDoctors(String search) {
+        return searchByRoleAndText(search, "doctor");
+    }
+
+    default List<User> searchPatients(String search) {
+        return searchByRoleAndText(search, "patient");
+    }
+
+    default List<User> searchUsers(String search) {
+        return searchByRoleAndText(search, null);
+    }
+
+    @Query("SELECT u FROM User u WHERE u.role.name IN ('doctor')")
     List<User> findAllDoctors();
 }

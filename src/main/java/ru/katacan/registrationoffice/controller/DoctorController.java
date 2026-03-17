@@ -30,10 +30,9 @@ public class DoctorController {
     @GetMapping()
     public ResponseEntity<DoctorListDto> getDoctors(
             @RequestParam(required = false) String search
-    ) {
-        DoctorListDto result = userService.searchDoctors(search);
+    ) { //TODO добавить плагинацию
         return ResponseEntity.status(HttpStatus.OK)
-                .body(result);
+                .body(userService.searchDoctors(search));
     }
 
     @GetMapping("/{doctorId}/slots")
@@ -57,10 +56,13 @@ public class DoctorController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(workSlotService.getDoctorSlotsBetweenDates(doctorId, startDate, endDate));
     }
-//
-//    @GetMapping("/{doctorId}/schedule")
-//    public ResponseEntity<DoctorScheduleDto> getDoctorSchedule(
-//            @PathVariable Long doctorId,
-//            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-//    }
+
+    @GetMapping("/{doctorId}/schedule")
+    public ResponseEntity<DoctorScheduleDto> getDoctorSchedule(
+            @PathVariable Long doctorId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    ) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(workSlotService.getDoctorSchedule(doctorId, date));
+    }
 }

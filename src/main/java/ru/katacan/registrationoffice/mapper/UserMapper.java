@@ -15,7 +15,7 @@ public class UserMapper {
         return RegistrationResponseDto.builder()
                 .userId(user.getId())
                 .fio(user.getFullName())
-                .aclName(user.getAcl() != null ? user.getAcl().getName() : null)
+                .role(user.getRole() != null ? user.getRole().getName() : null)
                 .message(message)
                 .build();
     }
@@ -26,9 +26,19 @@ public class UserMapper {
                 .user(UserInfoDto.builder()
                         .userId(user.getId())
                         .fio(user.getFullName())
-                        .aclName(user.getAcl() != null ? user.getAcl().getName() : null)
+                        .role(user.getRole() != null ? user.getRole().getName() : null)
                         .policyNumber(user.getPolicyNumber())
                         .build())
+                .build();
+    }
+
+
+    public UserInfoDto toUserInfo(User user) {
+        return UserInfoDto.builder()
+                .userId(user.getId())
+                .fio(user.getFullName())
+                .role(user.getRole() != null ? user.getRole().getName() : null)
+                .policyNumber(user.getPolicyNumber())
                 .build();
     }
 
@@ -73,6 +83,13 @@ public class UserMapper {
         return DoctorListDto.builder()
                 .doctors(doctorDtos)
                 .totalFound((long) doctorDtos.size())
+                .build();
+    }
+
+    public UserListDto toUserList(List<UserInfoDto> userDtos) {
+        return UserListDto.builder()
+                .users(userDtos)
+                .totalFound((long) userDtos.size())
                 .build();
     }
 

@@ -27,8 +27,8 @@ public class User {
     private String policyNumber;
 
     @ManyToOne
-    @JoinColumn(name = "f_acl_name_id", nullable = false)
-    private DictAclName acl;
+    @JoinColumn(name = "f_role_id", nullable = false)
+    private DictRole role;
 
     @Column(name = "f_speciality_name")
     private String speciality;

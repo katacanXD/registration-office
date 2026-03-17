@@ -10,6 +10,6 @@ import lombok.Data;
 public class RegistrationResponseDto {
     private Long userId;
     private String fio;
-    private String aclName;
+    private String role;
     private String message;
 }

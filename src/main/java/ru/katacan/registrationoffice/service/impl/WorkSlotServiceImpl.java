@@ -1,6 +1,7 @@
 package ru.katacan.registrationoffice.service.impl;
 
 import ru.katacan.registrationoffice.dto.DoctorCalendarDto;
+import ru.katacan.registrationoffice.dto.DoctorScheduleDto;
 import ru.katacan.registrationoffice.dto.DoctorSlotsDto;
 import ru.katacan.registrationoffice.entity.User;
 import ru.katacan.registrationoffice.entity.WorkSlot;
@@ -86,5 +87,21 @@ public class WorkSlotServiceImpl implements WorkSlotService {
                         .end(slot.getBreakEnd().format(TIME_FORMATTER))
                         .build())
                 .orElse(null);
+    }
+
+    @Override
+    public DoctorScheduleDto getDoctorSchedule(Long doctorId, LocalDate date) {
+        User doctor = userRepository.findById(doctorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Врач не найден"));
+
+        List<WorkSlot> workSlots = workSlotRepository.findByDoctorAndDate(doctor, date);
+        DoctorSlotsDto.BreakDto breakDto = getBreakForDoctor(workSlots);
+
+        DoctorScheduleDto.BreakDto scheduleBreak = breakDto != null ?
+                DoctorScheduleDto.BreakDto.builder()
+                        .start(breakDto.getStart())
+                        .end(breakDto.getEnd())
+                        .build() : null;
+        return workSlotMapper.toDoctorSchedule(date.toString(), workSlots, scheduleBreak);
     }
 }

@@ -18,7 +18,7 @@ import java.util.List;
 public class DataInitializer implements CommandLineRunner {
 
     private final DictStatusRepository statusRepository;
-    private final DictAclNameRepository aclNameRepository;
+    private final DictRoleRepository roleRepository;
     private final UserRepository userRepository;
     private final WorkSlotRepository workSlotRepository;
     private final AppointmentRepository appointmentRepository;
@@ -48,11 +48,11 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         // Роли пользователей
-        if (aclNameRepository.count() == 0) {
-            createAclName("patient");
-            createAclName("doctor");
-            createAclName("registrar");
-            createAclName("admin");
+        if (roleRepository.count() == 0) {
+            createRole("patient");
+            createRole("doctor");
+            createRole("registrar");
+            createRole("admin");
         }
     }
 
@@ -62,18 +62,18 @@ public class DataInitializer implements CommandLineRunner {
         statusRepository.save(status);
     }
 
-    private void createAclName(String name) {
-        DictAclName acl = new DictAclName();
-        acl.setName(name);
-        aclNameRepository.save(acl);
+    private void createRole(String name) {
+        DictRole role = new DictRole();
+        role.setName(name);
+        roleRepository.save(role);
     }
 
     private void initTestUsers() {
         if (userRepository.count() == 0) {
-            DictAclName patientRole = aclNameRepository.findByName("patient").orElseThrow();
-            DictAclName doctorRole = aclNameRepository.findByName("doctor").orElseThrow();
-            DictAclName registrarRole = aclNameRepository.findByName("registrar").orElseThrow();
-            DictAclName adminRole = aclNameRepository.findByName("admin").orElseThrow();
+            DictRole patientRole = roleRepository.findByName("patient").orElseThrow();
+            DictRole doctorRole = roleRepository.findByName("doctor").orElseThrow();
+            DictRole registrarRole = roleRepository.findByName("registrar").orElseThrow();
+            DictRole adminRole = roleRepository.findByName("admin").orElseThrow();
 
             // Пациенты
             createUser("Иванов Иван Иванович", "pass123", null, patientRole);
@@ -101,12 +101,12 @@ public class DataInitializer implements CommandLineRunner {
         }
     }
 
-    private User createUser(String fullName, String password, String policyNumber, DictAclName acl) {
+    private User createUser(String fullName, String password, String policyNumber, DictRole role) {
         User user = new User();
         user.setFullName(fullName);
         user.setPassword(password);
         user.setPolicyNumber(policyNumber);
-        user.setAcl(acl);
+        user.setRole(role);
         return userRepository.save(user);
     }
 

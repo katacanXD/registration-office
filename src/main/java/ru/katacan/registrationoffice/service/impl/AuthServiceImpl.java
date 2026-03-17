@@ -3,10 +3,10 @@ package ru.katacan.registrationoffice.service.impl;
 import ru.katacan.registrationoffice.dto.AuthRequestDto;
 import ru.katacan.registrationoffice.dto.LoginResponseDto;
 import ru.katacan.registrationoffice.dto.RegistrationResponseDto;
-import ru.katacan.registrationoffice.entity.DictAclName;
+import ru.katacan.registrationoffice.entity.DictRole;
 import ru.katacan.registrationoffice.entity.User;
 import ru.katacan.registrationoffice.mapper.UserMapper;
-import ru.katacan.registrationoffice.repository.DictAclNameRepository;
+import ru.katacan.registrationoffice.repository.DictRoleRepository;
 import ru.katacan.registrationoffice.repository.UserRepository;
 import ru.katacan.registrationoffice.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import java.util.Optional;
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
-    private final DictAclNameRepository aclNameRepository;
+    private final DictRoleRepository roleRepository;
     private final UserMapper userMapper;
 
     @Override
@@ -30,13 +30,13 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Пользователь с таким ФИО уже существует");
         }
 
-        DictAclName patientRole = aclNameRepository.findByName("patient")
+        DictRole patientRole = roleRepository.findByName("patient")
                 .orElseThrow(() -> new RuntimeException("Роль patient не найдена"));
 
         User user = new User();
         user.setFullName(request.getFio());
         user.setPassword(request.getPassword()); // В реальности нужно хэшировать!
-        user.setAcl(patientRole);
+        user.setRole(patientRole);
 
         User savedUser = userRepository.save(user);
 
